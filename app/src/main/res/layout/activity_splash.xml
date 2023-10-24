@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
         <ImageView
             android:layout_centerInParent="true"
-            android:src="@drawable/logo"
+            android:src="@mipmap/logo"
             android:layout_width="200dp"
             android:layout_height="200dp">
 
