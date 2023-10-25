@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "194730849624",
+    "project_id": "cajeros-a01ec",
+    "storage_bucket": "cajeros-a01ec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:194730849624:android:0f01427eef1888f51da12d",
+        "android_client_info": {
+          "package_name": "com.example.cajeros"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw4ZMHbpzvEtHircdmiG7jDDXMJxsNkkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
