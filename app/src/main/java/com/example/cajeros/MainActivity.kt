@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
             Firebase.auth.signOut()
             val currentUser = Firebase.auth.currentUser
             if (currentUser != null) {
-                Toast.makeText(this@MainActivity, "No se puedo cerrar sesion", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "No se pudo cerrar sesion", Toast.LENGTH_SHORT).show()
                 //reload()
             }else{
                 Toast.makeText(this@MainActivity, "Se cerro la sesion exitosamente", Toast.LENGTH_SHORT).show()

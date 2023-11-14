@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -17,6 +17,7 @@ class InicioSesion : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_inicio_sesion)
 
+        val intentRegistro = Intent(this, Registro::class.java)
         lateinit var auth: FirebaseAuth
         // Initialize Firebase Auth
         auth = Firebase.auth
@@ -24,6 +25,7 @@ class InicioSesion : AppCompatActivity() {
         val boton_inicio_sesion = findViewById<View>(R.id.boton_iniciar_sesion) as Button
         val email = findViewById<View>(R.id.email_inicio_sesion) as EditText
         val clave = findViewById<View>(R.id.clave_inicio_sesion) as EditText
+        val boton_registro = findViewById<View>(R.id.txt_signup) as TextView
 
         boton_inicio_sesion.setOnClickListener {
             if (email.text.isNotEmpty() && clave.text.isNotEmpty()){
@@ -38,6 +40,11 @@ class InicioSesion : AppCompatActivity() {
                 }
             }
         }
+
+        boton_registro.setOnClickListener{
+            startActivity(intentRegistro)
+        }
+
     }
     private fun showAlert() {
         val alertbuilder = AlertDialog.Builder(this@InicioSesion)

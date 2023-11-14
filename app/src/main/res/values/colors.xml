@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="gray">#DEDEDE</color>
+    <color name="white">#F0F0F0</color>
     <color name="turq">#61777F</color>
+    <color name="background">#232730</color>
+    <color name="background_dark">#1B1D29</color>
+    <color name="paper">#2E353F</color>
+    <color name="error">#e84545</color>
+    <color name="error_dark">#d32f2f</color>
+    <color name="warning_dark">#F48B29</color>
+    <color name="warning">#F0A500</color>
 </resources>

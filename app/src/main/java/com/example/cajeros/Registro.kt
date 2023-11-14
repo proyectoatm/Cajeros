@@ -23,22 +23,19 @@ class Registro : AppCompatActivity() {
         setup(auth)
 
     }
-
-
     private fun setup(auth: FirebaseAuth) {
         val boton_registro = findViewById<View>(R.id.boton_registro) as Button
-        val email = findViewById<View>(R.id.email) as EditText
-        val clave = findViewById<View>(R.id.clave) as EditText
-        val claverep = findViewById<View>(R.id.repetir_clave) as EditText
+        val email = findViewById<View>(R.id.etEmail) as EditText
+        val clave = findViewById<View>(R.id.etPass) as EditText
+        val claverep = findViewById<View>(R.id.etRPass) as EditText
         boton_registro.setOnClickListener {
             if (email.text.isNotEmpty() && clave.text.isNotEmpty() && claverep.text.isNotEmpty()){
-                Toast.makeText(this@Registro, "primer if pasado", Toast.LENGTH_SHORT).show()
                 if (clave.text.toString() == claverep.text.toString()){
-                    Toast.makeText(this@Registro, "segundo if pasado", Toast.LENGTH_SHORT).show()
                     auth.createUserWithEmailAndPassword(email.text.toString(), clave.text.toString()).addOnCompleteListener(this){
                         if (it.isSuccessful){
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
+                            finish()
                         }else{
                             showAlert()
                         }

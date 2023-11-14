@@ -9,9 +9,13 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class Splash : AppCompatActivity() {
@@ -19,12 +23,21 @@ class Splash : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
+        val currentUser = Firebase.auth.currentUser
+        val intentLogin = Intent(this, InicioSesion::class.java)
+        val intentMain = Intent(this, MainActivity::class.java)
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, MenuIngreso::class.java)
-
             if (isOnline(this)){
-                startActivity(intent)
-                finish()
+                if (currentUser != null) {
+                    Toast.makeText(this, "si se ha accedido, con: "+currentUser.email.toString(), Toast.LENGTH_SHORT).show()
+                    startActivity(intentMain)
+                    finish()
+                    //reload()
+                }else{
+                    Toast.makeText(this, "Debes inciar sesion o registrarte", Toast.LENGTH_SHORT).show()
+                    startActivity(intentLogin)
+                    finish()
+                }
             }else{
                 Toast.makeText(this@Splash, "No hay conexion a internet", Toast.LENGTH_SHORT).show()
                 val alertbuilder = AlertDialog.Builder(this@Splash)
@@ -37,9 +50,7 @@ class Splash : AppCompatActivity() {
                 dialog.setCancelable(false)
                 dialog.setCanceledOnTouchOutside(false)
             }
-
-
-        }, 3000)
+        }, 2000)
     }
 
     fun isOnline(context: Context): Boolean {
