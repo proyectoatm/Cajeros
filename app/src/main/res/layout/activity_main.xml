@@ -20,21 +20,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/_settings_"
-                android:backgroundTint="@color/turq">
-
-
-
-
-            </ImageButton>
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_alignParentLeft="true"
-                android:src="@drawable/flecha"
-                android:backgroundTint="@color/turq">
-
-
+                android:src="@drawable/settings"
+                android:backgroundTint="@color/background_dark">
             </ImageButton>
         </RelativeLayout>
 
