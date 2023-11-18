@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        /*
         val boton_cerrar_sesion = findViewById<View>(R.id.boton_cerrar_sesion) as Button
 
         boton_cerrar_sesion.setOnClickListener {
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
             }else{
                 Toast.makeText(this@MainActivity, "Se cerro la sesion exitosamente", Toast.LENGTH_SHORT).show()
             }
-            }
+        }
+        */
     }
 }
