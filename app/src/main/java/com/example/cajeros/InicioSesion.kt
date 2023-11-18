@@ -27,6 +27,7 @@ class InicioSesion : AppCompatActivity() {
         val clave = findViewById<View>(R.id.clave_inicio_sesion) as EditText
         val boton_registro = findViewById<View>(R.id.txt_signup) as TextView
 
+
         boton_inicio_sesion.setOnClickListener {
             if (email.text.isNotEmpty() && clave.text.isNotEmpty()){
                 auth.signInWithEmailAndPassword(email.text.toString(), clave.text.toString()).addOnCompleteListener(this){

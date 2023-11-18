@@ -13,5 +13,9 @@
         <item name="android:statusBarColor">@color/background</item>
     </style>
 
+    <style name="Base.Theme.Cajeros2" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@null</item>
+    </style>
+
     <style name="Theme.Cajeros" parent="Base.Theme.Cajeros" />
 </resources>

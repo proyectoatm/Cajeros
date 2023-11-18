@@ -69,20 +69,26 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
+            android:theme="@style/Base.Theme.Cajeros2"
             android:id="@+id/boton_iniciar_sesion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:background="@drawable/gradient_orange"
+            android:backgroundTint="@null"
+            android:textColor="@color/background_dark"
             android:text="Iniciar sesion"/>
 
         <TextView
             android:id="@+id/txt_signup"
+            android:paddingTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Registrate aqui"
-            android:textColor="@color/white"/>
+            android:textColor="@color/warning"
+            android:textStyle="bold"/>
 
         <ProgressBar
             android:id="@+id/progress_bar"
