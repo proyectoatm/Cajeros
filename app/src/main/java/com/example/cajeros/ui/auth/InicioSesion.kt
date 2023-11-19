@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.example.cajeros.MainActivity
 import com.example.cajeros.R
-import com.example.cajeros.ui.auth.Registro
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
