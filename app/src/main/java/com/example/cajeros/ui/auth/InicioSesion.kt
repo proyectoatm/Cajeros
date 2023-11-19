@@ -1,4 +1,4 @@
-package com.example.cajeros
+package com.example.cajeros.ui.auth
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +8,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.example.cajeros.MainActivity
+import com.example.cajeros.R
+import com.example.cajeros.ui.auth.Registro
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
