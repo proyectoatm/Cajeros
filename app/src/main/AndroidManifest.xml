@@ -32,10 +32,10 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".InicioSesion"
+            android:name=".ui.auth.InicioSesion"
             android:exported="false" />
         <activity
-            android:name=".Registro"
+            android:name=".ui.auth.Registro"
             android:exported="false" />
         <activity
             android:name=".Splash"
