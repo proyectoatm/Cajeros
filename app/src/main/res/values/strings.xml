@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Cajeros</string>
     <string name="title_activity_test">test</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">Buscar</string>
+    <string name="title_dashboard">Filtrar</string>
+    <string name="title_notifications">Perfil</string>
     <string name="title_activity_main">MainActivity</string>
 </resources>
