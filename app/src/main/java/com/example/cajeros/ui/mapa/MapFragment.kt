@@ -3,7 +3,9 @@ package com.example.cajeros.ui.mapa
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,15 +15,20 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.cajeros.R
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var context: Context
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     companion object {
         var mapFragment : SupportMapFragment?=null
@@ -38,9 +45,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     /*override fun onDetach() {
         super.onDetach()
         context = null
-    }
-
-     */
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,10 +55,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         var rootView = inflater.inflate(R.layout.fragment_map, container, false)
-
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this)
-
         return rootView
     }
 
@@ -61,7 +64,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(p0: GoogleMap) {
         mMap = p0
         enableLocation()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity().applicationContext)
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                Log.d("testeando", location.toString())
+                if (location != null) {
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(LatLng(location.latitude, location.longitude)))
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
+                }
+            }
     }
+
     private fun refreshCurrentFragment(){
         val fragmentId = findNavController().currentDestination?.id
         findNavController().popBackStack(fragmentId!!,true)
@@ -84,14 +97,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 requestLocationPermission()
-
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return
             }
             mMap.isMyLocationEnabled = true
@@ -105,7 +110,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             Toast.makeText(this.requireActivity(), "DEBES ACEPTAR PERMISOS DE UBICACION", Toast.LENGTH_SHORT).show()
         }else{
             ActivityCompat.requestPermissions(this.requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE_LOCATION)
-            //Toast.makeText(this.requireActivity(), "PERMISO ACEPTADO", Toast.LENGTH_SHORT).show()
             refreshCurrentFragment()
         }
     }

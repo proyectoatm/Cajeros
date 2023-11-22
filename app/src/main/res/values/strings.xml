@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cajeros</string>
+    <string name="app_name">Atm finder</string>
     <string name="title_activity_test">test</string>
     <string name="title_home">Buscar</string>
     <string name="title_dashboard">Filtrar</string>
