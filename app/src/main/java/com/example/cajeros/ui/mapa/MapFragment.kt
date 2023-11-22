@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.cajeros.R
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
@@ -56,9 +57,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         return rootView
     }
 
+    //AGREGAR FUNCIONES AL MAPA DENTRO DE ESTE MEETODO
     override fun onMapReady(p0: GoogleMap) {
         mMap = p0
         enableLocation()
+    }
+    private fun refreshCurrentFragment(){
+        val fragmentId = findNavController().currentDestination?.id
+        findNavController().popBackStack(fragmentId!!,true)
+        findNavController().navigate(fragmentId)
     }
 
     private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(
@@ -77,6 +84,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 requestLocationPermission()
+
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
@@ -97,6 +105,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             Toast.makeText(this.requireActivity(), "DEBES ACEPTAR PERMISOS DE UBICACION", Toast.LENGTH_SHORT).show()
         }else{
             ActivityCompat.requestPermissions(this.requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE_LOCATION)
+            //Toast.makeText(this.requireActivity(), "PERMISO ACEPTADO", Toast.LENGTH_SHORT).show()
+            refreshCurrentFragment()
         }
     }
 
@@ -108,6 +118,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         when(requestCode){
             REQUEST_CODE_LOCATION -> if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
                 mMap.isMyLocationEnabled = true
+
             }else{
                 Toast.makeText(this.requireActivity(), "DEBES ACEPTAR PERMISOS DE UBICACION", Toast.LENGTH_SHORT).show()
             }
