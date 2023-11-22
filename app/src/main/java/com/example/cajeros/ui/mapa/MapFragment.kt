@@ -73,6 +73,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
                 }
             }
+
     }
 
     private fun refreshCurrentFragment(){
