@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_dark"
     tools:context=".ui.perfil.ProfileFragment">
 
     <LinearLayout
@@ -22,8 +23,8 @@
                     android:layout_centerInParent="true"
                     android:background="@drawable/a0"
                     android:scaleType="fitXY"
-                    android:layout_width="190dp"
-                    android:layout_height="250dp">
+                    android:layout_width="140dp"
+                    android:layout_height="140dp">
                 </ImageButton>
             </RelativeLayout>
 
