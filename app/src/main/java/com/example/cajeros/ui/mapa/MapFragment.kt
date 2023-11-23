@@ -60,7 +60,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         return rootView
     }
 
-    //AGREGAR FUNCIONES AL MAPA DENTRO DE ESTE MEETODO
+    //AGREGAR FUNCIONES AL MAPA DENTRO DE ESTE METODO
     override fun onMapReady(p0: GoogleMap) {
         mMap = p0
         enableLocation()
