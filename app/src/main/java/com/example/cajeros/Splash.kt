@@ -42,9 +42,7 @@ class Splash : AppCompatActivity() {
                 val alertbuilder = AlertDialog.Builder(this@Splash)
                 alertbuilder.setTitle("No hay internet")
                 alertbuilder.setMessage("Por favor, activa el internet")
-                alertbuilder.setPositiveButton(
-                    "OK"
-                ) { dialogInterface, i -> finish() }
+                alertbuilder.setPositiveButton("OK") { dialogInterface, i -> finish() }
                 val dialog = alertbuilder.show()
                 dialog.setCancelable(false)
                 dialog.setCanceledOnTouchOutside(false)

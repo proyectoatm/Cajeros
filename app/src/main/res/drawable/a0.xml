@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item
+        android:drawable="@drawable/baseline_circle_24"
+        android:gravity="center"
+        android:height="165dp"
+        android:width="165dp"/>
+    <item
+        android:drawable="@drawable/vector2"
+        android:gravity="center"
+        android:height="165dp"
+        android:width="165dp"/>
+</layer-list>

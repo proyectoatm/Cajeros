@@ -11,4 +11,5 @@
     <color name="warning_dark">#F48B29</color>
     <color name="warning">#F0A500</color>
     <color name="yellow">#FFD600</color>
+    <color name="transparent">#00000000</color>
 </resources>

@@ -63,6 +63,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     //AGREGAR FUNCIONES AL MAPA DENTRO DE ESTE METODO
     override fun onMapReady(p0: GoogleMap) {
         mMap = p0
+        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN)//testeo de tipo de mapa
         enableLocation()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity().applicationContext)
         fusedLocationClient.lastLocation

@@ -6,58 +6,93 @@
     android:layout_height="match_parent"
     android:background="@color/background_dark"
     tools:context=".ui.perfil.ProfileFragment">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
-            <RelativeLayout
+            android:layout_weight="1"
+            android:paddingTop="30dp">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <ImageButton
-                    android:id="@+id/avatar"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/a0"
-                    android:scaleType="fitXY"
+                android:layout_height="match_parent"
+                android:layout_weight="1.2">
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal">
+                <RelativeLayout
                     android:layout_width="140dp"
-                    android:layout_height="140dp">
-                </ImageButton>
-            </RelativeLayout>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <RelativeLayout
+                    android:layout_height="match_parent"
+                    >
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/baseline_edit_24"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true">
+                    </ImageView>
+                    <ImageButton
+                        android:id="@+id/avatar"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/a0"
+                        android:scaleType="fitXY"
+                        android:layout_width="140dp"
+                        android:layout_height="150dp">
+                    </ImageButton>
+                </RelativeLayout>
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="test"
-                    android:textSize="50dp">
-
-                </TextView>
-            </RelativeLayout>
-
+                android:layout_height="match_parent"
+                android:layout_weight="1.2">
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/tvemail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:textColor="@color/warning_dark"
+                        android:text="Email: "
+                        android:textStyle="bold"
+                        android:textSize="20dp">
+                    </TextView>
+                </RelativeLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+            </LinearLayout>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
-
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
-
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
