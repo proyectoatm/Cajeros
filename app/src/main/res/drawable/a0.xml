@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layer-list
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:drawable="@drawable/baseline_circle_24"
         android:gravity="center"
-        android:height="165dp"
-        android:width="165dp"/>
+        android:height="140dp"
+        android:width="140dp"/>
     <item
         android:drawable="@drawable/vector2"
         android:gravity="center"
-        android:height="165dp"
-        android:width="165dp"/>
+        android:height="160dp"
+        android:width="160dp"/>
 </layer-list>

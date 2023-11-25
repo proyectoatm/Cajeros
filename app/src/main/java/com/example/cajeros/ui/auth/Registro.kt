@@ -2,6 +2,7 @@ package com.example.cajeros.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -9,8 +10,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.cajeros.MainActivity
 import com.example.cajeros.R
+import com.example.cajeros.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class Registro : AppCompatActivity() {
@@ -18,13 +22,14 @@ class Registro : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registro)
 
+        val db = Firebase.firestore
         lateinit var auth: FirebaseAuth
         // Initialize Firebase Auth
         auth = Firebase.auth
-        setup(auth)
+        setup(auth, db)
 
     }
-    private fun setup(auth: FirebaseAuth) {
+    private fun setup(auth: FirebaseAuth, db: FirebaseFirestore) {
         val boton_registro = findViewById<View>(R.id.boton_registro) as Button
         val email = findViewById<View>(R.id.etEmail) as EditText
         val clave = findViewById<View>(R.id.etPass) as EditText
@@ -35,6 +40,22 @@ class Registro : AppCompatActivity() {
                     auth.createUserWithEmailAndPassword(email.text.toString(), clave.text.toString()).addOnCompleteListener(this){
                         if (it.isSuccessful){
                             val intent = Intent(this, MainActivity::class.java)
+
+                            val currentUser = Firebase.auth.currentUser
+                            Log.d("testeo", "current user actual es : ${currentUser?.email.toString()}")
+                            val newUser = User(email.text.toString(),"a0")
+                            val user = hashMapOf(
+                                "email" to newUser.email,
+                                "avatar" to newUser.avatar
+                            )
+                            db.collection("users").document(currentUser?.uid.toString()).set(user)
+                                .addOnSuccessListener { documentReference ->
+                                    Log.d("testeo", "DocumentSnapshot added with ID: ${currentUser?.uid.toString()}")
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.w("testeo", "Error adding document", e)
+                                }
+
                             startActivity(intent)
                             finish()
                         }else{
@@ -43,6 +64,7 @@ class Registro : AppCompatActivity() {
                     }
                 }
             }
+
         }
     }
     private fun showAlert() {

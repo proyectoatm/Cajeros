@@ -1,16 +1,15 @@
 package com.example.cajeros.ui.perfil
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.GridLayout
 import android.widget.ImageButton
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.cajeros.R
 import com.example.cajeros.databinding.AvatarSelectorBinding
 import com.example.cajeros.databinding.FragmentProfileBinding
+import com.example.cajeros.ui.auth.InicioSesion
 
 
 class ProfileFragment : Fragment() {
@@ -55,8 +55,16 @@ class ProfileFragment : Fragment() {
         val gridAvatares:GridLayout = bindingDialog.gridAvatares
         avatar.setOnClickListener{
             profileViewModel.abrirDialogAvatares(this.requireActivity(), R.style.TemaAvataresDialog, inflater, R.layout.avatar_selector, exitButton.id, gridAvatares.id)
-            refreshCurrentFragment()
         }
+
+        val cerrarSesion: Button = binding.botonCerrarSesion
+        cerrarSesion.setOnClickListener{
+            profileViewModel.cerrarSesion()
+            val intentLogin = Intent(this.requireActivity(), InicioSesion::class.java)
+            startActivity(intentLogin)
+            this.requireActivity().finish()
+        }
+
 
         return root
     }

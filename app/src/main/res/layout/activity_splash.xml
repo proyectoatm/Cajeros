@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/background_dark"
     tools:context=".Splash">
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -15,8 +14,6 @@
             android:src="@mipmap/logo"
             android:layout_width="200dp"
             android:layout_height="200dp">
-
         </ImageView>
     </RelativeLayout>
-
 </LinearLayout>

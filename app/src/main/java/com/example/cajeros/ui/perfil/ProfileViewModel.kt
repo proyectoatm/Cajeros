@@ -2,6 +2,7 @@ package com.example.cajeros.ui.perfil
 
 
 import android.app.Activity
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.cajeros.ui.auth.InicioSesion
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -72,38 +74,31 @@ class ProfileViewModel : ViewModel() {
             if (imageB != null) {
                 imageB.setOnClickListener{
                     Log.d("testeo", "boton "+(i+1).toString()+" presionado")
-                }
-            }
-        }
-        /*av24.setOnClickListener {
-            Log.d("testeo", "boton 24 presionado")
-            checked = "a24"
-            if (gridlayout != null) {
-                for (i in 0 until gridlayout.childCount){
-                    Log.d("testeo", i.toString())
+                    imageB.alpha=1f
+                    checked = "a"+(i+1).toString()
+                    for (j in 0 until gridlayout.childCount){
+                        if (i!=j){
+                            val imageB2: View? =gridlayout.getChildAt(j) as ImageButton
+                            if (imageB2 != null) {
+                                imageB2.alpha=0.5f
+                            }
+                        }
+                    }
                 }
             }
         }
 
-         */
         ext.setOnClickListener {
             Log.d("testeo", checked)
+            if (checked!="") {
+                val doc = db.collection("users").document(currentUser?.uid.toString())
+                    .update("avatar", checked)
+            }
             dialog.dismiss()
         }
     }
 
-    /*
-    fun avatarSeleccionado(activity: Activity, radioGroupID: Int){
-        val radioGroup = RadioGroup(activity)
-        radioGroup.findViewById<RadioGroup>(radioGroupID)
-        val radioButtonIds = mutableListOf<Int>()
-        for (i in 0 until radioGroup.childCount){
-            val radioButton = radioGroup.getChildAt(i) as RadioButton
-            radioButtonIds.add(radioButton.id)
-        }
+    fun cerrarSesion(){
+        Firebase.auth.signOut()
     }
-
-     */
-
-
 }
