@@ -77,10 +77,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
                 }
             }
+        //se crea un marcador
         var marker1 = mMap.addMarker(MarkerOptions()
             .position(LatLng(37.423106, -122.081365))
             .title("primer marcador")
             .icon(BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)))
+        //listener que detecta zoom del mapa
         mMap.setOnCameraIdleListener {
             Log.d("testeo", mMap.cameraPosition.zoom.toString())
             if (mMap.cameraPosition.zoom < 12) {

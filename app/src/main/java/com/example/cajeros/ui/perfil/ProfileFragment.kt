@@ -24,8 +24,7 @@ class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private var _bindingDialog: AvatarSelectorBinding? = null
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
     private val bindingDialog get() = _bindingDialog!!
 
@@ -45,16 +44,14 @@ class ProfileFragment : Fragment() {
             val id = field.getInt(null)
             avatar.background = getDrawable(this.requireActivity(), id)
         }
-
+        val exitButton: ImageButton = bindingDialog.exitDialog
+        val gridAvatares: GridLayout = bindingDialog.gridAvatares
+        avatar.setOnClickListener{
+            profileViewModel.abrirDialogAvatares(this.requireActivity(), R.style.TemaAvataresDialog, inflater, R.layout.avatar_selector, exitButton.id, gridAvatares.id)
+        }
         val tv_email: TextView = binding.tvemail
         profileViewModel.tvemail.observe(viewLifecycleOwner){
             tv_email.text = it
-        }
-
-        val exitButton: ImageButton = bindingDialog.exitDialog
-        val gridAvatares:GridLayout = bindingDialog.gridAvatares
-        avatar.setOnClickListener{
-            profileViewModel.abrirDialogAvatares(this.requireActivity(), R.style.TemaAvataresDialog, inflater, R.layout.avatar_selector, exitButton.id, gridAvatares.id)
         }
 
         val cerrarSesion: Button = binding.botonCerrarSesion
@@ -64,7 +61,6 @@ class ProfileFragment : Fragment() {
             startActivity(intentLogin)
             this.requireActivity().finish()
         }
-
 
         return root
     }
