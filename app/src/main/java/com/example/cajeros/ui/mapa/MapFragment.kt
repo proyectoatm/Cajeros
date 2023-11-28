@@ -22,7 +22,10 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
@@ -74,7 +77,24 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
                 }
             }
-
+        var marker1 = mMap.addMarker(MarkerOptions()
+            .position(LatLng(37.423106, -122.081365))
+            .title("primer marcador")
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)))
+        mMap.setOnCameraIdleListener {
+            Log.d("testeo", mMap.cameraPosition.zoom.toString())
+            if (mMap.cameraPosition.zoom < 12) {
+                Log.d("testeo", "zoom menor a 12")
+                if (marker1 != null) {
+                    marker1.isVisible=false
+                }
+            } else {
+                Log.d("testeo", "zoom mayor a 12")
+                if (marker1 != null) {
+                    marker1.isVisible=true
+                }
+            }
+        }
     }
 
     private fun refreshCurrentFragment(){
