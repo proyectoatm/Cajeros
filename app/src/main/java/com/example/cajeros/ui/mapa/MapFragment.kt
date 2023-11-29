@@ -3,9 +3,7 @@ package com.example.cajeros.ui.mapa
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,22 +11,20 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.cajeros.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
+    private val mapViewModel : MapViewModel by viewModels()
     private lateinit var mMap: GoogleMap
     private lateinit var context: Context
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -54,8 +50,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         var rootView = inflater.inflate(R.layout.fragment_map, container, false)
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
@@ -66,37 +61,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     //AGREGAR FUNCIONES AL MAPA DENTRO DE ESTE METODO
     override fun onMapReady(p0: GoogleMap) {
         mMap = p0
-        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN)//testeo de tipo de mapa
         enableLocation()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity().applicationContext)
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location : Location? ->
-                Log.d("testeando", location.toString())
-                if (location != null) {
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(LatLng(location.latitude, location.longitude)))
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
-                }
-            }
-        //se crea un marcador
-        var marker1 = mMap.addMarker(MarkerOptions()
-            .position(LatLng(37.423106, -122.081365))
-            .title("primer marcador")
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)))
-        //listener que detecta zoom del mapa
-        mMap.setOnCameraIdleListener {
-            Log.d("testeo", mMap.cameraPosition.zoom.toString())
-            if (mMap.cameraPosition.zoom < 12) {
-                Log.d("testeo", "zoom menor a 12")
-                if (marker1 != null) {
-                    marker1.isVisible=false
-                }
-            } else {
-                Log.d("testeo", "zoom mayor a 12")
-                if (marker1 != null) {
-                    marker1.isVisible=true
-                }
-            }
-        }
+        mapViewModel.mapLogicHere(mMap, fusedLocationClient)
     }
 
     private fun refreshCurrentFragment(){
@@ -138,11 +105,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when(requestCode){
             REQUEST_CODE_LOCATION -> if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
                 mMap.isMyLocationEnabled = true
