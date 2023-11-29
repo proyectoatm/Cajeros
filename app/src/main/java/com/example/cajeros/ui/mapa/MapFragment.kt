@@ -21,7 +21,6 @@ import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 
-
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     private val mapViewModel : MapViewModel by viewModels()
