@@ -34,7 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MapViewModel : ViewModel() {
 
     private val db = Firebase.firestore
-    private val polyList = mutableListOf<Polyline>()
+    private var poly : Polyline? = null
     fun mapLogicHere(map: GoogleMap, fusedLocationClient:FusedLocationProviderClient, activity: Activity){
         map.setMapType(GoogleMap.MAP_TYPE_TERRAIN)//testeo de tipo de mapa
         fusedLocationClient.lastLocation
@@ -145,9 +145,8 @@ class MapViewModel : ViewModel() {
         }
         val handler = Handler(Looper.getMainLooper())
         handler.post {
-            polyList.clear()
-            val poly = map.addPolyline(polyLineOptions)
-            polyList.add(poly)
+            poly?.remove()
+            poly = map.addPolyline(polyLineOptions)
         }
 
     }
