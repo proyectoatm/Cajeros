@@ -40,15 +40,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         this.context = context
     }
 
-    /*override fun onDetach() {
-        super.onDetach()
-        context = null
-    }*/
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         var rootView = inflater.inflate(R.layout.fragment_map, container, false)
@@ -57,12 +48,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         return rootView
     }
 
-    //AGREGAR FUNCIONES AL MAPA DENTRO DE ESTE METODO
     override fun onMapReady(p0: GoogleMap) {
         mMap = p0
         enableLocation()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity().applicationContext)
-        mapViewModel.mapLogicHere(mMap, fusedLocationClient)
+        mapViewModel.mapLogicHere(mMap, fusedLocationClient, this.requireActivity())
     }
 
     private fun refreshCurrentFragment(){
@@ -71,9 +61,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         findNavController().navigate(fragmentId)
     }
 
-    private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(
-        context,
-        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     private fun enableLocation(){
         if(!::mMap.isInitialized) return
@@ -94,7 +82,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             requestLocationPermission()
         }
     }
-
     private fun requestLocationPermission() {
         if(ActivityCompat.shouldShowRequestPermissionRationale(this.requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)){
             Toast.makeText(this.requireActivity(), "DEBES ACEPTAR PERMISOS DE UBICACION", Toast.LENGTH_SHORT).show()
@@ -103,7 +90,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             refreshCurrentFragment()
         }
     }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when(requestCode){
             REQUEST_CODE_LOCATION -> if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
