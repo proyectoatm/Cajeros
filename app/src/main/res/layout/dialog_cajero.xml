@@ -29,10 +29,10 @@
                 android:layout_marginTop="30px">
             </TextView>
             <TextView
-                android:id="@+id/latitudCajero"
+                android:id="@+id/distanciaCajero"
                 android:layout_width="match_parent"
                 android:layout_height="100px"
-                android:text="Latitud"
+                android:text="Distancia"
                 android:gravity="center"
                 android:textColor="@color/warning_dark">
             </TextView>

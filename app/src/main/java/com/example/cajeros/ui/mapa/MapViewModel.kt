@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.math.roundToInt
 
 class MapViewModel : ViewModel() {
 
@@ -90,21 +91,36 @@ class MapViewModel : ViewModel() {
                 val height = 295 // Height in dp
                 val scale = activity.resources.displayMetrics.density
                 dialog.window?.setLayout((width * scale).toInt(), (height * scale).toInt())
+                //NOMBRE BANCO
                 var nombre: TextView? = dialog.findViewById<TextView>(R.id.nombreBanco)
                 if (nombre != null) {
                     nombre.text=marker.title
                 }
-                var lat: TextView? = dialog.findViewById<TextView>(R.id.latitudCajero)
-                if (lat != null) {
-                    lat.text=marker.position.latitude.toString()
+                //DISTANCIA
+                var dist: TextView? = dialog.findViewById<TextView>(R.id.distanciaCajero)
+                if (dist != null) {
+                    fusedLocationClient.lastLocation
+                        .addOnSuccessListener { location : Location? ->
+                            if (location != null) {
+                                var start = Location("actualPos")
+                                start.latitude=location.latitude
+                                start.longitude=location.longitude
+                                var end = Location("markerPos")
+                                end.latitude=marker.position.latitude
+                                end.longitude=marker.position.longitude
+                                val distance = start.distanceTo(end)
+                                dist.text="Distancia: "+distance.roundToInt().toString()+" metros"
+                            }
+                        }
                 }
+                //LONGITUD
                 var lon: TextView? = dialog.findViewById<TextView>(R.id.longitudCajero)
                 if (lon != null) {
                     lon.text=marker.position.longitude.toString()
                 }
                 var p2 = LatLng(marker.position.latitude, marker.position.longitude)
                 var boton_ir:Button? = dialog.findViewById<Button>(R.id.botonDialogIr)
-
+                //IR
                 if (boton_ir != null) {
                     boton_ir.setOnClickListener{
                         createRoute(mMap,p2,fusedLocationClient)
@@ -119,12 +135,9 @@ class MapViewModel : ViewModel() {
     private fun createRoute(map: GoogleMap, p2:LatLng, fusedLocationClient:FusedLocationProviderClient) {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
-                Log.d("posiaaa", location.toString())
                 if (location != null) {
                     var start = "${location.longitude},${location.latitude}"
                     var end = "${p2.longitude},${p2.latitude}"
-                    Log.d("posiaaa", "start: "+start.toString())
-                    Log.d("posiaaa", "end: "+end.toString())
                     CoroutineScope(Dispatchers.IO).launch {
                         val call = getRetrofit().create(ApiService::class.java)
                             .getRoute("5b3ce3597851110001cf624807d5e5f2c6fd4b0aaa8ca7d3fced1089", start, end)
@@ -132,7 +145,6 @@ class MapViewModel : ViewModel() {
                             drawRoute(map,call.body())
                         } else {
                             Log.i("testeo", "KO")
-                            Log.i("testeo", call.toString())
                         }
                     }
                 }
