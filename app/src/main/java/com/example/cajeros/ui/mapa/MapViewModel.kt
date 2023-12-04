@@ -8,6 +8,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
@@ -54,36 +56,64 @@ class MapViewModel : ViewModel() {
                 }
             }
         val docRef = db.collection("cajeros")
-        docRef.get().addOnSuccessListener { documents ->
-            val markerList = mutableListOf<Marker>()
-            for (document in documents) {
-                val marker = map.addMarker(
-                    MarkerOptions()
-                        .position(LatLng(document.data.get("latitud").toString().toDouble(), document.data?.get("longitud").toString().toDouble()))
-                        .title("Banco: "+document.data.get("banco").toString())
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)))
-                if (marker != null) {
-                    markerList.add(marker)
+        docRef.get()
+            docRef.addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.w("testeo", "Listen failed.", e)
+                    return@addSnapshotListener
                 }
-            }
-            map.setOnCameraIdleListener {
-                Log.d("testeo", map.cameraPosition.zoom.toString())
-                if (map.cameraPosition.zoom < 11) {
-                    Log.d("testeo", "zoom menor a 12")
-                    for (marker in markerList) {
-                        Log.d("testeo", markerList.toString())
-                        marker.isVisible=false
+                if (snapshot != null) {
+                    Log.d("testeo", "Current data: ${snapshot}")
+                    //value = snapshot.data?.get("avatar").toString()
+
+                    val markerList = mutableListOf<Marker>()
+                    for (document in snapshot) {
+                        Log.d("testeo", document.data.get("reportes").toString())
+                        val list = document.data.get("reportes").toString()
+                            .replace("[", "")
+                            .replace("]", "")
+                            .split(",")
+                            .map { it.trim() }
+                            .toMutableList()
+                        var icon = BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)
+                        if (document.data.get("reportes")!=null){
+                            Log.d("testeo", list.toString())
+                            icon = if (list.size<3) {
+                                BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)
+                            } else if (list.size in 3..5) {
+                                BitmapDescriptorFactory.fromResource(R.drawable.atmyellow)
+                            } else {
+                                BitmapDescriptorFactory.fromResource(R.drawable.atmred)
+                            }
+                        }
+                        val marker = map.addMarker(
+                            MarkerOptions()
+                                .position(LatLng(document.data.get("latitud").toString().toDouble(), document.data?.get("longitud").toString().toDouble()))
+                                .title("Banco: "+document.data.get("banco").toString())
+                                .icon(icon))
+                        if (marker != null) {
+                            markerList.add(marker)
+                        }
+                    }
+                    map.setOnCameraIdleListener {
+                        Log.d("testeo", map.cameraPosition.zoom.toString())
+                        if (map.cameraPosition.zoom < 11) {
+                            Log.d("testeo", "zoom menor a 12")
+                            for (marker in markerList) {
+                                Log.d("testeo", markerList.toString())
+                                marker.isVisible=false
+                            }
+                        } else {
+                            for (marker in markerList) {
+                                Log.d("testeo", markerList.toString())
+                                marker.isVisible=true
+                            }
+                        }
                     }
                 } else {
-                    for (marker in markerList) {
-                        Log.d("testeo", markerList.toString())
-                        marker.isVisible=true
-                    }
+                    Log.d("testeo", "Current data: null")
                 }
             }
-        }.addOnFailureListener { exception ->
-            Log.w("testeo", "Error getting documents: ", exception)
-        }
         dialogMarkers(map, activity, fusedLocationClient)
     }
     fun dialogMarkers(mMap:GoogleMap, activity: Activity, fusedLocationClient: FusedLocationProviderClient){
@@ -119,19 +149,22 @@ class MapViewModel : ViewModel() {
                                 //REPORTAR
                                 var botonReport: Button? = dialog.findViewById(R.id.botonDialogReport)
                                 if (botonReport != null) {
-                                    if (distance.roundToInt()<20){
-                                        botonReport.isVisible=true
-                                    }else{
-                                        botonReport.isVisible=false
-                                    }
+                                    botonReport.isVisible = distance.roundToInt()<20
                                 }
                             }
                         }
                 }
-                //LONGITUD
+                //ESTADO
                 var lon: TextView? = dialog.findViewById<TextView>(R.id.longitudCajero)
                 if (lon != null) {
                     lon.text=marker.position.longitude.toString()
+                }
+                var scrollReports:LinearLayout? = dialog.findViewById(R.id.scrollReports)
+                for (i in 0 until 20) {
+                    var imageView = ImageView(activity)
+                    imageView.setImageResource(R.drawable.a0)
+                    imageView.layoutParams = LinearLayout.LayoutParams(80,80)
+                    scrollReports!!.addView(imageView)
                 }
                 var p2 = LatLng(marker.position.latitude, marker.position.longitude)
                 var boton_ir:Button? = dialog.findViewById<Button>(R.id.botonDialogIr)

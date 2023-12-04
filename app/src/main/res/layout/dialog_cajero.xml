@@ -40,11 +40,22 @@
                 android:id="@+id/longitudCajero"
                 android:layout_width="match_parent"
                 android:layout_height="100px"
-                android:text="Longitud"
+                android:text="Estado"
                 android:gravity="center"
                 android:textColor="@color/warning_dark"
-                android:layout_marginBottom="90px">
+                android:layout_marginBottom="10px">
             </TextView>
+            <HorizontalScrollView
+                android:layout_width="400px"
+                android:layout_height="100px"
+                >
+                <LinearLayout
+                    android:id="@+id/scrollReports"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                </LinearLayout>
+            </HorizontalScrollView>
             <androidx.appcompat.widget.AppCompatButton
                 android:theme="@style/Base.Theme.Cajeros2"
                 android:id="@+id/botonDialogIr"
