@@ -10,11 +10,16 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import com.example.cajeros.R
 import com.example.cajeros.network.ApiService
 import com.example.cajeros.network.RouteResponse
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -36,11 +41,13 @@ class MapViewModel : ViewModel() {
 
     private val db = Firebase.firestore
     private var poly : Polyline? = null
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var client:FusedLocationProviderClient
     fun mapLogicHere(map: GoogleMap, fusedLocationClient:FusedLocationProviderClient, activity: Activity){
         map.setMapType(GoogleMap.MAP_TYPE_TERRAIN)//testeo de tipo de mapa
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
-                Log.d("posiaaa", location.toString())
                 if (location != null) {
                     map.animateCamera(CameraUpdateFactory.newLatLng(LatLng(location.latitude, location.longitude)))
                     map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
@@ -50,7 +57,6 @@ class MapViewModel : ViewModel() {
         docRef.get().addOnSuccessListener { documents ->
             val markerList = mutableListOf<Marker>()
             for (document in documents) {
-                Log.d("testeo", "${document.id} => ${document.data}")
                 val marker = map.addMarker(
                     MarkerOptions()
                         .position(LatLng(document.data.get("latitud").toString().toDouble(), document.data?.get("longitud").toString().toDouble()))
@@ -87,8 +93,8 @@ class MapViewModel : ViewModel() {
                 builder.setView(R.layout.dialog_cajero)
                 val dialog = builder.show()
                 dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                val width = 200 // Width in dp
-                val height = 295 // Height in dp
+                val width = 200 // Width en dp
+                val height = 295 // Height en dp
                 val scale = activity.resources.displayMetrics.density
                 dialog.window?.setLayout((width * scale).toInt(), (height * scale).toInt())
                 //NOMBRE BANCO
@@ -110,6 +116,15 @@ class MapViewModel : ViewModel() {
                                 end.longitude=marker.position.longitude
                                 val distance = start.distanceTo(end)
                                 dist.text="Distancia: "+distance.roundToInt().toString()+" metros"
+                                //REPORTAR
+                                var botonReport: Button? = dialog.findViewById(R.id.botonDialogReport)
+                                if (botonReport != null) {
+                                    if (distance.roundToInt()<20){
+                                        botonReport.isVisible=true
+                                    }else{
+                                        botonReport.isVisible=false
+                                    }
+                                }
                             }
                         }
                 }
@@ -122,16 +137,36 @@ class MapViewModel : ViewModel() {
                 var boton_ir:Button? = dialog.findViewById<Button>(R.id.botonDialogIr)
                 //IR
                 if (boton_ir != null) {
+                    if (::client.isInitialized){
+                        client.removeLocationUpdates(locationCallback)
+                    }
                     boton_ir.setOnClickListener{
-                        createRoute(mMap,p2,fusedLocationClient)
-                        dialog.dismiss()
+                        locationRequest = LocationRequest.create().apply {
+                            interval = 10000 // Update interval in milliseconds
+                            fastestInterval = 5000 // Fastest update interval
+                            // Set other properties as needed (e.g., priority)
+                        }
+                        locationCallback = object : LocationCallback() {
+                            override fun onLocationResult(p0: LocationResult) {
+                                p0?.locations?.forEach { location ->
+                                    // Handle location change here
+                                    Log.d("testeo","New Location: Lat=${location.latitude}, Long=${location.longitude}, going to: ${p2.toString()}")
+                                    // Execute your custom function
+                                    // ...
+                                    createRoute(mMap,p2,fusedLocationClient)
+                                    dialog.dismiss()
+                                }
+                            }
+                        }
+                        client = LocationServices.getFusedLocationProviderClient(activity)
+                        client.requestLocationUpdates(locationRequest, locationCallback, null)
                     }
                 }
                 return true
-
             }
         })
     }
+
     private fun createRoute(map: GoogleMap, p2:LatLng, fusedLocationClient:FusedLocationProviderClient) {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
