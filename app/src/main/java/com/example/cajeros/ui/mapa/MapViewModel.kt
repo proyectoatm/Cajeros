@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import com.example.cajeros.R
@@ -185,15 +186,64 @@ class MapViewModel : ViewModel() {
                 }
                 //REPORTES
                 var scrollReports:LinearLayout? = dialog.findViewById(R.id.scrollReports)
-                for (i in 0 until 20) {
-                    var imageView = ImageView(activity)
-                    imageView.setImageResource(R.drawable.a0)
-                    imageView.layoutParams = LinearLayout.LayoutParams(80,80)
-                    scrollReports!!.addView(imageView)
+                if (scrollReports!=null){
+                    val docRef = db.collection("cajeros").document(marker.tag.toString())
+                    docRef.get()
+                    docRef.addSnapshotListener { snapshot, e ->
+                        if (e != null) {
+                            Log.w("testeo", "Listen failed.", e)
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null) {
+                            val list = snapshot.data?.get("historial").toString()
+                                .replace("[", "")
+                                .replace("]", "")
+                                .split(",")
+                                .map { it.trim() }
+                                .toMutableList()
+                            list.reverse()
+                            scrollReports.removeAllViews()
+                            if (snapshot.data?.get("historial") != null) {
+                                val docUsers = db.collection("users")
+                                docUsers.get()
+                                docUsers.addSnapshotListener { snapshot2, e2 ->
+                                    if (e2 != null) {
+                                        Log.w("testeo", "Listen failed.", e2)
+                                        return@addSnapshotListener
+                                    }
+                                    if (snapshot2 != null) {
+                                        for (id in list){
+                                            if (list.indexOf(id)==20){
+                                                break
+                                            }
+                                            var avatarid=""
+                                            for (document in snapshot2){
+                                                if (document.id==id){
+                                                    avatarid = document.data["avatar"].toString()
+                                                    val field = R.drawable::class.java.getField(avatarid)
+                                                    val idav = field.getInt(null)
+                                                    var imageView = ImageView(activity)
+                                                    imageView.setImageResource(idav)
+                                                    imageView.layoutParams = LinearLayout.LayoutParams(80,80)
+                                                    scrollReports!!.addView(imageView)
+                                                }
+                                            }
+                                        }
+                                    }else{
+                                        Log.d("testeo", "Current data: null")
+                                    }
+                                }
+                            }else{
+                                Log.d("testeo", "Current data: null")
+                            }
+                        } else {
+                            Log.d("testeo", "Current data: null")
+                        }
+                    }
                 }
+                //IR
                 var p2 = LatLng(marker.position.latitude, marker.position.longitude)
                 var boton_ir:Button? = dialog.findViewById<Button>(R.id.botonDialogIr)
-                //IR
                 if (boton_ir != null) {
                     if (::client.isInitialized){
                         client.removeLocationUpdates(locationCallback)
