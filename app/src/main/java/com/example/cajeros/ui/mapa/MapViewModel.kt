@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import com.example.cajeros.R
+import com.example.cajeros.data.model.Cajero
 import com.example.cajeros.network.ApiService
 import com.example.cajeros.network.RouteResponse
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -45,9 +46,11 @@ class MapViewModel : ViewModel() {
     private var poly : Polyline? = null
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-    private lateinit var client:FusedLocationProviderClient
+    private lateinit var client: FusedLocationProviderClient
+    private lateinit var cajero: Cajero
+    private var markerList = mutableListOf<Marker>()
     fun mapLogicHere(map: GoogleMap, fusedLocationClient:FusedLocationProviderClient, activity: Activity){
-        map.setMapType(GoogleMap.MAP_TYPE_TERRAIN)//testeo de tipo de mapa
+        map.setMapType(GoogleMap.MAP_TYPE_TERRAIN)//tipo de mapa
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
                 if (location != null) {
@@ -63,12 +66,7 @@ class MapViewModel : ViewModel() {
                     return@addSnapshotListener
                 }
                 if (snapshot != null) {
-                    Log.d("testeo", "Current data: ${snapshot}")
-                    //value = snapshot.data?.get("avatar").toString()
-
-                    val markerList = mutableListOf<Marker>()
                     for (document in snapshot) {
-                        Log.d("testeo", document.data.get("reportes").toString())
                         val list = document.data.get("reportes").toString()
                             .replace("[", "")
                             .replace("]", "")
@@ -77,13 +75,11 @@ class MapViewModel : ViewModel() {
                             .toMutableList()
                         var icon = BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)
                         if (document.data.get("reportes")!=null){
-                            Log.d("testeo", list.toString())
-                            icon = if (list.size<3) {
-                                BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)
-                            } else if (list.size in 3..5) {
-                                BitmapDescriptorFactory.fromResource(R.drawable.atmyellow)
-                            } else {
-                                BitmapDescriptorFactory.fromResource(R.drawable.atmred)
+                            if (list.size==1 && list[0]!=""){
+                                icon = BitmapDescriptorFactory.fromResource(R.drawable.atmyellow)
+                            }
+                            if (list.size>=2){
+                                icon = BitmapDescriptorFactory.fromResource(R.drawable.atmred)
                             }
                         }
                         val marker = map.addMarker(
@@ -92,6 +88,7 @@ class MapViewModel : ViewModel() {
                                 .title("Banco: "+document.data.get("banco").toString())
                                 .icon(icon))
                         if (marker != null) {
+                            marker.tag=document.id
                             markerList.add(marker)
                         }
                     }
@@ -100,12 +97,10 @@ class MapViewModel : ViewModel() {
                         if (map.cameraPosition.zoom < 11) {
                             Log.d("testeo", "zoom menor a 12")
                             for (marker in markerList) {
-                                Log.d("testeo", markerList.toString())
                                 marker.isVisible=false
                             }
                         } else {
                             for (marker in markerList) {
-                                Log.d("testeo", markerList.toString())
                                 marker.isVisible=true
                             }
                         }
@@ -147,18 +142,48 @@ class MapViewModel : ViewModel() {
                                 val distance = start.distanceTo(end)
                                 dist.text="Distancia: "+distance.roundToInt().toString()+" metros"
                                 //REPORTAR
-                                var botonReport: Button? = dialog.findViewById(R.id.botonDialogReport)
-                                if (botonReport != null) {
-                                    botonReport.isVisible = distance.roundToInt()<20
+                                var botonesReport: LinearLayout? = dialog.findViewById(R.id.reportes)
+                                if (botonesReport != null) {
+                                    botonesReport.isVisible = distance.roundToInt()<20
                                 }
                             }
                         }
                 }
                 //ESTADO
-                var lon: TextView? = dialog.findViewById<TextView>(R.id.longitudCajero)
-                if (lon != null) {
-                    lon.text=marker.position.longitude.toString()
+                var estado: TextView? = dialog.findViewById<TextView>(R.id.longitudCajero)
+                Log.d("testeo", "TAG MARKER (ID): "+marker.tag)
+                if (estado != null) {
+                    val docRef = db.collection("cajeros").document(marker.tag.toString())
+                    docRef.get()
+                    docRef.addSnapshotListener { snapshot, e ->
+                        if (e != null) {
+                            Log.w("testeo", "Listen failed.", e)
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null) {
+                            val list = snapshot.data?.get("reportes").toString()
+                                .replace("[", "")
+                                .replace("]", "")
+                                .split(",")
+                                .map { it.trim() }
+                                .toMutableList()
+                            if (snapshot.data?.get("reportes") != null) {
+                                estado.text = "Disponible"
+                                if (list.size==1 && list[0]!=""){
+                                    estado.text = "Reporte reciente"
+                                }
+                                if (list.size>=2){
+                                    estado.text = "No disponible"
+                                }
+                            }else{
+                                estado.text = "Disponible"
+                            }
+                        } else {
+                            Log.d("testeo", "Current data: null")
+                        }
+                    }
                 }
+                //REPORTES
                 var scrollReports:LinearLayout? = dialog.findViewById(R.id.scrollReports)
                 for (i in 0 until 20) {
                     var imageView = ImageView(activity)
@@ -182,10 +207,8 @@ class MapViewModel : ViewModel() {
                         locationCallback = object : LocationCallback() {
                             override fun onLocationResult(p0: LocationResult) {
                                 p0?.locations?.forEach { location ->
-                                    // Handle location change here
-                                    Log.d("testeo","New Location: Lat=${location.latitude}, Long=${location.longitude}, going to: ${p2.toString()}")
-                                    // Execute your custom function
-                                    // ...
+                                    //Handle location change here
+                                    Log.d("testeo","Actual POS: Lat=${location.latitude}, Long=${location.longitude}, Destino: ${p2.toString()}")
                                     createRoute(mMap,p2,fusedLocationClient)
                                     dialog.dismiss()
                                 }
@@ -228,7 +251,6 @@ class MapViewModel : ViewModel() {
             poly?.remove()
             poly = map.addPolyline(polyLineOptions)
         }
-
     }
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
