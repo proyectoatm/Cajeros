@@ -46,9 +46,9 @@
             <TextView
                 android:layout_width="400px"
                 android:layout_height="50px"
-                android:text="Ultimos reportes"
+                android:text="Historial de reportes"
                 android:textSize="10dp"
-                android:gravity="bottom"
+                android:gravity="center"
                 android:textColor="@color/warning_dark">
             </TextView>
             <HorizontalScrollView

@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.view.isVisible
@@ -32,6 +33,8 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -50,6 +53,7 @@ class MapViewModel : ViewModel() {
     private lateinit var client: FusedLocationProviderClient
     private lateinit var cajero: Cajero
     private var markerList = mutableListOf<Marker>()
+    private val currentUser = Firebase.auth.currentUser
     fun mapLogicHere(map: GoogleMap, fusedLocationClient:FusedLocationProviderClient, activity: Activity){
         map.setMapType(GoogleMap.MAP_TYPE_TERRAIN)//tipo de mapa
         fusedLocationClient.lastLocation
@@ -266,6 +270,31 @@ class MapViewModel : ViewModel() {
                         }
                         client = LocationServices.getFusedLocationProviderClient(activity)
                         client.requestLocationUpdates(locationRequest, locationCallback, null)
+                    }
+                }
+                //REALIZAR REPORTES
+                var botonDisponible:Button? = dialog.findViewById(R.id.reportDisponible)
+                if (botonDisponible != null) {
+                    botonDisponible.setOnClickListener{
+                        val docRef = db.collection("cajeros").document(marker.tag.toString())
+                        val userid = currentUser?.uid.toString()
+                        docRef.update("historial", FieldValue.arrayRemove(userid))
+                        docRef.update("reportes", FieldValue.delete())
+                        docRef.update("historial", FieldValue.arrayUnion(userid))
+                        Toast.makeText(activity, "Reporte realizado", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                    }
+                }
+                var botonNoDisponible:Button? = dialog.findViewById(R.id.reportNoDisponible)
+                if (botonNoDisponible != null) {
+                    botonNoDisponible.setOnClickListener{
+                        val docRef = db.collection("cajeros").document(marker.tag.toString())
+                        val userid = currentUser?.uid.toString()
+                        docRef.update("historial", FieldValue.arrayRemove(userid))
+                        docRef.update("reportes", FieldValue.arrayUnion(userid))
+                        docRef.update("historial", FieldValue.arrayUnion(userid))
+                        Toast.makeText(activity, "Reporte realizado", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
                     }
                 }
                 return true
