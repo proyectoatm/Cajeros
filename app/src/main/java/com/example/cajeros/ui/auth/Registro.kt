@@ -37,7 +37,7 @@ class Registro : AppCompatActivity() {
         val error = findViewById<View>(R.id.errorReg) as TextView
         boton_registro.setOnClickListener {
             if (email.text.isNotEmpty() && clave.text.isNotEmpty() && claverep.text.isNotEmpty()){
-                if(email.text.toString().count { it == '@'}==1 && email.text.toString().count { it == '.'}==1) {
+                if(email.text.toString().count { it == '@'}==1 && email.text.toString().count { it == '.'}>=1) {
                     if (clave.text.toString().length >= 6) {
                         if (clave.text.toString() == claverep.text.toString()) {
                             auth.createUserWithEmailAndPassword(
