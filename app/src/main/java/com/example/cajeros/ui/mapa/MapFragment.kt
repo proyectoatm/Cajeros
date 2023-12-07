@@ -29,6 +29,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private lateinit var filtroBanco:String
+    private lateinit var filtroDispo:String
     companion object {
         var mapFragment : SupportMapFragment?=null
         val TAG: String = MapFragment::class.java.simpleName
@@ -44,11 +45,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         filtroBanco = mapViewModel.banco.value.toString()
+        filtroDispo = mapViewModel.dispo.value.toString()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map, container, false)
         filtroBanco = mapViewModel.banco.value.toString()
+        filtroDispo = mapViewModel.dispo.value.toString()
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this)
         return rootView
@@ -59,7 +62,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         enableLocation()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity().applicationContext)
         filtroBanco = mapViewModel.banco.value.toString()
-        mapViewModel.mapLogicHere(mMap, fusedLocationClient, this.requireActivity(), filtroBanco)
+        filtroDispo = mapViewModel.dispo.value.toString()
+        mapViewModel.mapLogicHere(mMap, fusedLocationClient, this.requireActivity(), filtroBanco, filtroDispo)
     }
 
     private fun refreshCurrentFragment(){

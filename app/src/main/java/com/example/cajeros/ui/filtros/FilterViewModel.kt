@@ -40,8 +40,10 @@ class FilterViewModel : ViewModel() {
         val alertbuilder = AlertDialog.Builder(activity, resource)
         alertbuilder.setView(inflater.inflate(resource2, null))
         val dialog = alertbuilder.show()
-        dialog.setCancelable(false)
-        dialog.setCanceledOnTouchOutside(false)
+        val width = 230 // Width en dp
+        val height = 305 // Height en dp
+        val scale = activity.resources.displayMetrics.density
+        dialog.window?.setLayout((width * scale).toInt(), (height * scale).toInt())
         val scrollFilter = dialog.findViewById<LinearLayout>(scroll)!!
         var lista = mutableListOf<String>()
         val docRef = db.collection("cajeros")
@@ -98,8 +100,10 @@ class FilterViewModel : ViewModel() {
         val alertbuilder = AlertDialog.Builder(activity, resource)
         alertbuilder.setView(inflater.inflate(resource2, null))
         val dialog = alertbuilder.show()
-        dialog.setCancelable(false)
-        dialog.setCanceledOnTouchOutside(false)
+        val width = 230 // Width en dp
+        val height = 305 // Height en dp
+        val scale = activity.resources.displayMetrics.density
+        dialog.window?.setLayout((width * scale).toInt(), (height * scale).toInt())
         val scrollFilter = dialog.findViewById<LinearLayout>(scroll)!!
         var lista = mutableListOf<String>()
         lista.clear()
