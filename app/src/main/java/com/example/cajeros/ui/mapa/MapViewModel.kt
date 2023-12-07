@@ -13,7 +13,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import com.example.cajeros.R
@@ -70,6 +69,7 @@ class MapViewModel : ViewModel() {
                     Log.w("testeo", "Listen failed.", e)
                     return@addSnapshotListener
                 }
+
                 if (snapshot != null) {
                     for (document in snapshot) {
                         val list = document.data.get("reportes").toString()
@@ -149,7 +149,7 @@ class MapViewModel : ViewModel() {
                                 //REPORTAR
                                 var botonesReport: LinearLayout? = dialog.findViewById(R.id.reportes)
                                 if (botonesReport != null) {
-                                    botonesReport.isVisible = distance.roundToInt()<20
+                                    botonesReport.isVisible = distance.roundToInt()<20 // ESTE ES EL LIMITE DE DISTANCIA EN METROS PARA PODER VER BOTONES DE REPORTE
                                 }
                             }
                         }
@@ -199,6 +199,7 @@ class MapViewModel : ViewModel() {
                             return@addSnapshotListener
                         }
                         if (snapshot != null) {
+                            scrollReports.removeAllViews()
                             val list = snapshot.data?.get("historial").toString()
                                 .replace("[", "")
                                 .replace("]", "")
@@ -206,7 +207,6 @@ class MapViewModel : ViewModel() {
                                 .map { it.trim() }
                                 .toMutableList()
                             list.reverse()
-                            scrollReports.removeAllViews()
                             if (snapshot.data?.get("historial") != null) {
                                 val docUsers = db.collection("users")
                                 docUsers.get()
@@ -216,6 +216,7 @@ class MapViewModel : ViewModel() {
                                         return@addSnapshotListener
                                     }
                                     if (snapshot2 != null) {
+                                        scrollReports.removeAllViews()
                                         for (id in list){
                                             if (list.indexOf(id)==20){
                                                 break
