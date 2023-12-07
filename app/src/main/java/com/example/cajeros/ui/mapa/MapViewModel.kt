@@ -14,6 +14,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.cajeros.R
 import com.example.cajeros.data.model.Cajero
@@ -53,7 +55,25 @@ class MapViewModel : ViewModel() {
     private lateinit var cajero: Cajero
     private var markerList = mutableListOf<Marker>()
     private val currentUser = Firebase.auth.currentUser
-    fun mapLogicHere(map: GoogleMap, fusedLocationClient:FusedLocationProviderClient, activity: Activity){
+
+    private val _banco = MutableLiveData<String>().apply {
+        val docRef = db.collection("users").document(currentUser?.uid.toString())
+        docRef.get()
+        docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.w("testeo", "Listen failed.", e)
+                return@addSnapshotListener
+            }
+            if (snapshot != null) {
+                value=snapshot.data?.get("filtrobanco").toString()
+            } else {
+                Log.d("testeo", "Current data: null")
+            }
+        }
+    }
+    val banco: LiveData<String> = _banco
+
+    fun mapLogicHere(map: GoogleMap, fusedLocationClient:FusedLocationProviderClient, activity: Activity, bancoF:String){
         map.setMapType(GoogleMap.MAP_TYPE_TERRAIN)//tipo de mapa
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
@@ -69,34 +89,71 @@ class MapViewModel : ViewModel() {
                     Log.w("testeo", "Listen failed.", e)
                     return@addSnapshotListener
                 }
-
                 if (snapshot != null) {
-                    for (document in snapshot) {
-                        val list = document.data.get("reportes").toString()
-                            .replace("[", "")
-                            .replace("]", "")
-                            .split(",")
-                            .map { it.trim() }
-                            .toMutableList()
-                        var icon = BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)
-                        if (document.data.get("reportes")!=null){
-                            if (list.size==1 && list[0]!=""){
-                                icon = BitmapDescriptorFactory.fromResource(R.drawable.atmyellow)
+                    if(bancoF=="Todos"){
+                        map.clear()
+                        for (document in snapshot) {
+                            Log.d("testeo", "Valor actual de banco: "+bancoF)
+                            val list = document.data.get("reportes").toString()
+                                .replace("[", "")
+                                .replace("]", "")
+                                .split(",")
+                                .map { it.trim() }
+                                .toMutableList()
+                            var icon = BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)
+                            if (document.data.get("reportes")!=null){
+                                if (list.size==1 && list[0]!=""){
+                                    icon = BitmapDescriptorFactory.fromResource(R.drawable.atmyellow)
+                                }
+                                if (list.size>=2){
+                                    icon = BitmapDescriptorFactory.fromResource(R.drawable.atmred)
+                                }
                             }
-                            if (list.size>=2){
-                                icon = BitmapDescriptorFactory.fromResource(R.drawable.atmred)
+                            val marker = map.addMarker(
+                                MarkerOptions()
+                                    .position(LatLng(document.data.get("latitud").toString().toDouble(), document.data?.get("longitud").toString().toDouble()))
+                                    .title("Banco: "+document.data.get("banco").toString())
+                                    .icon(icon))
+                            if (marker != null) {
+                                marker.tag=document.id
+                                markerList.add(marker)
                             }
                         }
-                        val marker = map.addMarker(
-                            MarkerOptions()
-                                .position(LatLng(document.data.get("latitud").toString().toDouble(), document.data?.get("longitud").toString().toDouble()))
-                                .title("Banco: "+document.data.get("banco").toString())
-                                .icon(icon))
-                        if (marker != null) {
-                            marker.tag=document.id
-                            markerList.add(marker)
+                    }else{
+                        for (document in snapshot) {
+                            Log.d("testeo", "Valor actual de banco: "+bancoF)
+                            if(document.data.get("banco").toString() != bancoF){
+                                continue
+                            }else{
+                                map.clear()
+                                val list = document.data.get("reportes").toString()
+                                    .replace("[", "")
+                                    .replace("]", "")
+                                    .split(",")
+                                    .map { it.trim() }
+                                    .toMutableList()
+                                var icon = BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)
+                                if (document.data.get("reportes")!=null){
+                                    if (list.size==1 && list[0]!=""){
+                                        icon = BitmapDescriptorFactory.fromResource(R.drawable.atmyellow)
+                                    }
+                                    if (list.size>=2){
+                                        icon = BitmapDescriptorFactory.fromResource(R.drawable.atmred)
+                                    }
+                                }
+                                val marker = map.addMarker(
+                                    MarkerOptions()
+                                        .position(LatLng(document.data.get("latitud").toString().toDouble(), document.data?.get("longitud").toString().toDouble()))
+                                        .title("Banco: "+document.data.get("banco").toString())
+                                        .icon(icon))
+                                if (marker != null) {
+                                    marker.tag=document.id
+                                    markerList.add(marker)
+                                }
+                            }
                         }
                     }
+
                     map.setOnCameraIdleListener {
                         Log.d("testeo", map.cameraPosition.zoom.toString())
                         if (map.cameraPosition.zoom < 11) {
