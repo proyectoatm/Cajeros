@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -95,7 +95,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
     private fun requestLocationPermission() {
         if(ActivityCompat.shouldShowRequestPermissionRationale(this.requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)){
-            Toast.makeText(this.requireActivity(), "DEBES ACEPTAR PERMISOS DE UBICACION", Toast.LENGTH_SHORT).show()
+            val alertbuilder = AlertDialog.Builder(this.requireActivity())
+            alertbuilder.setTitle("Permiso de ubicacion")
+            alertbuilder.setMessage("Para usar esta aplicacion necesitas activar el permiso de ubicacion")
+            alertbuilder.setPositiveButton("OK") { dialogInterface, i -> this.requireActivity().finish() }
+            val dialog = alertbuilder.show()
+            dialog.setCancelable(false)
+            dialog.setCanceledOnTouchOutside(false)
         }else{
             ActivityCompat.requestPermissions(this.requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE_LOCATION)
             refreshCurrentFragment()
@@ -107,18 +113,29 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 mMap.isMyLocationEnabled = true
 
             }else{
-                Toast.makeText(this.requireActivity(), "DEBES ACEPTAR PERMISOS DE UBICACION", Toast.LENGTH_SHORT).show()
+                val alertbuilder = AlertDialog.Builder(this.requireActivity())
+                alertbuilder.setTitle("Permiso de ubicacion")
+                alertbuilder.setMessage("Para usar esta aplicacion necesitas activar el permiso de ubicacion")
+                alertbuilder.setPositiveButton("OK") { dialogInterface, i -> this.requireActivity().finish() }
+                val dialog = alertbuilder.show()
+                dialog.setCancelable(false)
+                dialog.setCanceledOnTouchOutside(false)
             }
             else -> {}
         }
     }
-
     override fun onResume() {
         super.onResume()
         if(!::mMap.isInitialized) return
         if(!isLocationPermissionGranted()){
             mMap.isMyLocationEnabled = false
-            Toast.makeText(this.requireActivity(), "DEBES ACEPTAR PERMISOS DE UBICACION", Toast.LENGTH_SHORT).show()
+            val alertbuilder = AlertDialog.Builder(this.requireActivity())
+            alertbuilder.setTitle("Permiso de ubicacion")
+            alertbuilder.setMessage("Para usar esta aplicacion necesitas activar el permiso de ubicacion")
+            alertbuilder.setPositiveButton("OK") { dialogInterface, i -> this.requireActivity().finish() }
+            val dialog = alertbuilder.show()
+            dialog.setCancelable(false)
+            dialog.setCanceledOnTouchOutside(false)
         }
     }
 }

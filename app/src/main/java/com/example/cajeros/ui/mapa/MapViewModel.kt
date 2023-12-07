@@ -125,7 +125,7 @@ class MapViewModel : ViewModel() {
             .addOnSuccessListener { location : Location? ->
                 if (location != null) {
                     map.animateCamera(CameraUpdateFactory.newLatLng(LatLng(location.latitude, location.longitude)))
-                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 14f))
                 }
             }
         val docRef = db.collection("cajeros")
@@ -233,12 +233,95 @@ class MapViewModel : ViewModel() {
                                 Log.d("testeo", "else del when")
                         }
                     }else{
+                        map.clear()
                         for (document in snapshot) {
                             if(document.data.get("banco").toString() != bancoF){
                                 continue
                             }else{
-                                map.clear()
-                                addMarkers(map, document)
+                                //map.clear()
+                                //addMarkers(map, document)
+                                when (dispoF){
+                                    "Todos" ->{
+                                        addMarkers(map, document)
+                                    }
+                                    "Disponibles" ->{
+                                        val list = document.data.get("reportes").toString()
+                                            .replace("[", "")
+                                            .replace("]", "")
+                                            .split(",")
+                                            .map { it.trim() }
+                                            .toMutableList()
+                                        var icon = BitmapDescriptorFactory.fromResource(R.drawable.atmgreen)
+                                        var aux=true
+                                        if (document.data.get("reportes")!=null){
+                                            if (list.size==1 && list[0]!=""){
+                                                icon = BitmapDescriptorFactory.fromResource(R.drawable.atmyellow)
+                                                aux=false
+                                            }
+                                            if (list.size>=2){
+                                                icon = BitmapDescriptorFactory.fromResource(R.drawable.atmred)
+                                                aux=false
+                                            }
+                                        }
+                                        if(aux == true) {
+                                            val marker = map.addMarker(
+                                                MarkerOptions()
+                                                    .position(LatLng(document.data.get("latitud").toString().toDouble(), document.data?.get("longitud").toString().toDouble()))
+                                                    .title("Banco: "+document.data.get("banco").toString())
+                                                    .icon(icon))
+                                            if (marker != null) {
+                                                marker.tag=document.id
+                                                markerList.add(marker)
+                                            }
+                                        }
+                                    }
+                                    "Reportados" ->{
+                                        val list = document.data.get("reportes").toString()
+                                            .replace("[", "")
+                                            .replace("]", "")
+                                            .split(",")
+                                            .map { it.trim() }
+                                            .toMutableList()
+                                        if (document.data.get("reportes")!=null){
+                                            if (list.size==1 && list[0]!=""){
+                                                var icon = BitmapDescriptorFactory.fromResource(R.drawable.atmyellow)
+                                                val marker = map.addMarker(
+                                                    MarkerOptions()
+                                                        .position(LatLng(document.data.get("latitud").toString().toDouble(), document.data?.get("longitud").toString().toDouble()))
+                                                        .title("Banco: "+document.data.get("banco").toString())
+                                                        .icon(icon))
+                                                if (marker != null) {
+                                                    marker.tag=document.id
+                                                    markerList.add(marker)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    "No disponibles" ->{
+                                        val list = document.data.get("reportes").toString()
+                                            .replace("[", "")
+                                            .replace("]", "")
+                                            .split(",")
+                                            .map { it.trim() }
+                                            .toMutableList()
+                                        if (document.data.get("reportes")!=null){
+                                            if (list.size>=2){
+                                                var icon = BitmapDescriptorFactory.fromResource(R.drawable.atmred)
+                                                val marker = map.addMarker(
+                                                    MarkerOptions()
+                                                        .position(LatLng(document.data.get("latitud").toString().toDouble(), document.data?.get("longitud").toString().toDouble()))
+                                                        .title("Banco: "+document.data.get("banco").toString())
+                                                        .icon(icon))
+                                                if (marker != null) {
+                                                    marker.tag=document.id
+                                                    markerList.add(marker)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else ->
+                                        Log.d("testeo", "else del when")
+                                }
                             }
                         }
                     }

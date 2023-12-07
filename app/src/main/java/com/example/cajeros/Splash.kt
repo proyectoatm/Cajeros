@@ -28,20 +28,17 @@ class Splash : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             if (isOnline(this)){
                 if (currentUser != null) {
-                    Toast.makeText(this, "si se ha accedido, con: "+currentUser.email.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Se ha accedido, con: "+currentUser.email.toString(), Toast.LENGTH_SHORT).show()
                     startActivity(intentMain)
                     finish()
-                    //reload()
                 }else{
-                    Toast.makeText(this, "Debes inciar sesion o registrarte", Toast.LENGTH_SHORT).show()
                     startActivity(intentLogin)
                     finish()
                 }
             }else{
-                Toast.makeText(this@Splash, "No hay conexion a internet", Toast.LENGTH_SHORT).show()
                 val alertbuilder = AlertDialog.Builder(this@Splash)
-                alertbuilder.setTitle("No hay internet")
-                alertbuilder.setMessage("Por favor, activa el internet")
+                alertbuilder.setTitle("Sin internet")
+                alertbuilder.setMessage("Para usar esta aplicacion necesitas internet")
                 alertbuilder.setPositiveButton("OK") { dialogInterface, i -> finish() }
                 val dialog = alertbuilder.show()
                 dialog.setCancelable(false)

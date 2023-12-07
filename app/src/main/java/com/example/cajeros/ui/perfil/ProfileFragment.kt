@@ -52,7 +52,14 @@ class ProfileFragment : Fragment() {
         profileViewModel.tvemail.observe(viewLifecycleOwner){
             tv_email.text = it
         }
-
+        val registeredtv: TextView = binding.tvregistered
+        profileViewModel.registered.observe(viewLifecycleOwner){
+            registeredtv.text = it
+        }
+        val lastontv: TextView = binding.tvlastacces
+        profileViewModel.laston.observe(viewLifecycleOwner){
+            lastontv.text = it
+        }
         val cerrarSesion: Button = binding.botonCerrarSesion
         cerrarSesion.setOnClickListener{
             profileViewModel.cerrarSesion()
@@ -60,7 +67,6 @@ class ProfileFragment : Fragment() {
             startActivity(intentLogin)
             this.requireActivity().finish()
         }
-
         return root
     }
 

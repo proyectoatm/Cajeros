@@ -77,6 +77,13 @@
             android:text="Registrate aqui"
             android:textColor="@color/warning"
             android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/errorlog"
+            android:layout_width="match_parent"
+            android:layout_height="200px"
+            android:gravity="center"
+            android:textColor="@color/error_dark">
+        </TextView>
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"

@@ -21,14 +21,13 @@ class InicioSesion : AppCompatActivity() {
 
         val intentRegistro = Intent(this, Registro::class.java)
         lateinit var auth: FirebaseAuth
-        // Initialize Firebase Auth
         auth = Firebase.auth
 
         val boton_inicio_sesion = findViewById<View>(R.id.boton_iniciar_sesion) as Button
         val email = findViewById<View>(R.id.email_inicio_sesion) as EditText
         val clave = findViewById<View>(R.id.clave_inicio_sesion) as EditText
         val boton_registro = findViewById<View>(R.id.txt_signup) as TextView
-
+        val error = findViewById<View>(R.id.errorlog) as TextView
 
         boton_inicio_sesion.setOnClickListener {
             if (email.text.isNotEmpty() && clave.text.isNotEmpty()){
@@ -39,8 +38,12 @@ class InicioSesion : AppCompatActivity() {
                         finish()
                     }else{
                         showAlert()
+                        email.setText("")
+                        clave.setText("")
                     }
                 }
+            }else{
+                error.text="Debes llenar todos los campos"
             }
         }
 
@@ -55,7 +58,7 @@ class InicioSesion : AppCompatActivity() {
         alertbuilder.setMessage("Error al autenticar usuario")
         alertbuilder.setPositiveButton(
             "OK"
-        ) { dialogInterface, i -> finish() }
+        ) { dialogInterface, i -> }
         val dialog = alertbuilder.show()
         dialog.setCancelable(false)
         dialog.setCanceledOnTouchOutside(false)
